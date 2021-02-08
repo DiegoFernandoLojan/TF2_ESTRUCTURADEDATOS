@@ -13,6 +13,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import javax.swing.JOptionPane;
 import modelo.maestro;
 
 /**
@@ -23,7 +24,7 @@ public class frmMaestros extends javax.swing.JFrame {
 
     public final String ruta = System.getProperties().getProperty("user.dir");
     DefaultTableModel miModelo;
-    String[] cabecera = {"N°", "Nombre", "Apellido", "Cedula", "Direccion", "Telefono", "Cargo", "Sueldo", "Estado", "Carrera", "Materia"};
+    String[] cabecera = {"N°", "Nombre", "Apellido", "Direccion", "Cedula", "Telefono", "Cargo", "Sueldo", "Carrera", "Materia"};
     String[][] data = {};
     int num = 0;
     gestorMaestros gestor = new gestorMaestros();
@@ -42,7 +43,7 @@ public class frmMaestros extends javax.swing.JFrame {
         gestor.AbrirArchivo(FileName, lista);
         miModelo = new DefaultTableModel(data, cabecera);
         tablaMaestros.setModel(miModelo);
-
+        ver_datos(1);
         File archivo = null;
         FileReader fr = null;
         BufferedReader br = null;
@@ -67,6 +68,28 @@ public class frmMaestros extends javax.swing.JFrame {
             } catch (IOException e2) {
             }
         }
+
+        try {
+            // Apertura del fichero y creacion de BufferedReader para poder
+            // hacer una lectura comoda (disponer del metodo readLine()).
+            archivo = new File(ruta + "//materias.txt");
+            fr = new FileReader(archivo);
+            br = new BufferedReader(fr);
+            // Lectura del fichero
+            String linea;
+            while ((linea = br.readLine()) != null) {
+                cbomateria.addItem(linea);
+            }
+        } catch (IOException e) {
+        } finally {
+            try {
+                if (null != fr) {
+                    fr.close();
+                }
+            } catch (IOException e2) {
+            }
+        }
+
     }
 
     void limpiar_entradas() {
@@ -88,9 +111,8 @@ public class frmMaestros extends javax.swing.JFrame {
     }
 
     void ver_datos(int ind) {
-        String nom, ape1, direc, rol, esta, carrera; //falta materia
+        String nom, ape1, direc, rol, carrera, mater, sueld;
         int cedu, codig, telef;
-        double sueld;
         switch (ind) {
             case 1: {
                 Nodo aux = lista.lc;
@@ -105,11 +127,10 @@ public class frmMaestros extends javax.swing.JFrame {
                     telef = aux.pro.getTelefono();
                     sueld = aux.pro.getSueldo();
                     rol = aux.pro.getRol();
-                    esta = aux.pro.getEstado();
                     carrera = aux.pro.getCarrera();
-                    //aqui falta carrera
+                    mater = aux.pro.getMateria();
                     num++;
-                    Object[] fila = {codig, nom, ape1, direc, cedu, telef, sueld, rol, esta, carrera};
+                    Object[] fila = {codig, nom, ape1, direc, cedu, telef, sueld, rol, carrera, mater};
                     miModelo.addRow(fila);
                     aux = aux.enlace;
                 }
@@ -129,11 +150,11 @@ public class frmMaestros extends javax.swing.JFrame {
                     telef = aux.pro.getTelefono();
                     sueld = aux.pro.getSueldo();
                     rol = aux.pro.getRol();
-                    esta = aux.pro.getEstado();
                     carrera = aux.pro.getCarrera();
+                    mater = aux.pro.getMateria();
                     //aqui falta carrera
                     num++;
-                    Object[] fila = {codig, nom, ape1, direc, cedu, telef, sueld, rol, esta, carrera};
+                    Object[] fila = {codig, nom, ape1, direc, cedu, telef, sueld, rol, carrera, mater};
                     miModelo.addRow(fila);
                     aux = aux.enlace1;
                 }
@@ -217,8 +238,6 @@ public class frmMaestros extends javax.swing.JFrame {
         cbomateria = new javax.swing.JComboBox<>();
         jLabel11 = new javax.swing.JLabel();
         txtsueldo = new javax.swing.JTextField();
-        jLabel12 = new javax.swing.JLabel();
-        cboestado = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -250,17 +269,17 @@ public class frmMaestros extends javax.swing.JFrame {
         tablaMaestros.setBackground(new java.awt.Color(255, 255, 255));
         tablaMaestros.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null, null, null}
+                {null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "CODIGO", "NOMBRE", "APELLIDO", "CEDULA", "TELEFONO", "DIRECCION", "CARGO", "SUELDO", "ESTADO", "CARRERA", "MATERIA"
+                "CODIGO", "NOMBRE", "APELLIDO", "CEDULA", "TELEFONO", "DIRECCION", "CARGO", "SUELDO", "CARRERA", "MATERIA"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false, false, false, false
+                false, false, false, false, false, false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -349,6 +368,11 @@ public class frmMaestros extends javax.swing.JFrame {
 
         btneliminar.setBackground(new java.awt.Color(255, 255, 255));
         btneliminar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/removeM.png"))); // NOI18N
+        btneliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btneliminarActionPerformed(evt);
+            }
+        });
 
         btnbuscar.setBackground(new java.awt.Color(255, 255, 255));
         btnbuscar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/search_102938.png"))); // NOI18N
@@ -376,20 +400,6 @@ public class frmMaestros extends javax.swing.JFrame {
         txtsueldo.setBackground(new java.awt.Color(255, 255, 255));
         txtsueldo.setFont(new java.awt.Font("Eras Light ITC", 3, 14)); // NOI18N
 
-        jLabel12.setFont(new java.awt.Font("Eras Light ITC", 3, 16)); // NOI18N
-        jLabel12.setForeground(new java.awt.Color(0, 0, 0));
-        jLabel12.setText("ESTADO:");
-
-        cboestado.setBackground(new java.awt.Color(255, 255, 255));
-        cboestado.setFont(new java.awt.Font("Eras Light ITC", 3, 14)); // NOI18N
-        cboestado.setForeground(new java.awt.Color(153, 0, 0));
-        cboestado.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "A", "D" }));
-        cboestado.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cboestadoActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
@@ -416,18 +426,15 @@ public class frmMaestros extends javax.swing.JFrame {
                 .addGap(28, 28, 28)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(18, 18, 18)
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(txtcedula)
                             .addComponent(txttelefono)
-                            .addComponent(cbocargo, 0, 210, Short.MAX_VALUE)
-                            .addComponent(cboestado, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(cbocargo, 0, 210, Short.MAX_VALUE))
                         .addGap(40, 40, 40)
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -482,9 +489,7 @@ public class frmMaestros extends javax.swing.JFrame {
                     .addComponent(jLabel10)
                     .addComponent(cbomateria, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel11)
-                    .addComponent(txtsueldo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel12)
-                    .addComponent(cboestado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtsueldo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 49, Short.MAX_VALUE)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(btnguardar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -531,10 +536,6 @@ public class frmMaestros extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void cboestadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboestadoActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_cboestadoActionPerformed
-
     private void btnatrasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnatrasActionPerformed
         // TODO add your handling code here:
         this.setVisible(false);
@@ -546,21 +547,36 @@ public class frmMaestros extends javax.swing.JFrame {
 
     private void btnguardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnguardarActionPerformed
         // TODO add your handling code here:
-        int codig = Integer.parseInt(txtcodigo.getText().toUpperCase());
+        int codig = Integer.parseInt(txtcodigo.getText().toString());
         String nom = txtnombre.getText().toUpperCase();
         String ape1 = txtapellido.getText().toUpperCase();
-        int cedula = Integer.parseInt(txtcedula.getText().toUpperCase());
+        int cedula = Integer.parseInt(txtcedula.getText().toString());
         int telef = Integer.parseInt(txttelefono.getText());
         String direc = txtdireccion.getText().toUpperCase();
-        double suel= Double.parseDouble(txtsueldo.getText().toUpperCase());
+        String suel = txtsueldo.getText().toString();
         String rol = cbocargo.getSelectedItem().toString();
-        String esta= cboestado.getSelectedItem().toString();
-        String carre= cboAsignarCarrera.getSelectedItem().toString();
-        lista.lc = lista.inserta_final(lista.lc, new maestro(new Object[]{codig,nom, ape1, cedula, telef, direc, suel, rol, esta,carre}));
+        String carre = cboAsignarCarrera.getSelectedItem().toString();
+        String matr = cbomateria.getSelectedItem().toString();
+        lista.lc = lista.inserta_final(lista.lc, new maestro(new Object[]{codig, nom, ape1, cedula, telef, direc, suel, rol, carre, matr}));
         limpiar_entradas();
         ver_datos(1);
         gestor.GrabarArchivo(FileName, lista);
+        
+        //AQUI SI MAME Y NO SE QUE HICE JAJA BUENO NO ME ACUERDO BROS
     }//GEN-LAST:event_btnguardarActionPerformed
+
+    private void btneliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btneliminarActionPerformed
+        // TODO add your handling code here:
+        eliminar();
+        gestor.GrabarArchivo(FileName, lista);
+        limpiar_entradas();
+        ver_datos(1);
+        if (lista.lc == null) {
+            JOptionPane.showMessageDialog(this, "La lista esta vacia");
+        }
+
+
+    }//GEN-LAST:event_btneliminarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -604,12 +620,10 @@ public class frmMaestros extends javax.swing.JFrame {
     private javax.swing.JButton btnguardar;
     private javax.swing.JComboBox<String> cboAsignarCarrera;
     private javax.swing.JComboBox<String> cbocargo;
-    private javax.swing.JComboBox<String> cboestado;
     private javax.swing.JComboBox<String> cbomateria;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
-    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;

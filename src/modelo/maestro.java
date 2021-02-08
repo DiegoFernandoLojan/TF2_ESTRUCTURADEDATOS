@@ -13,10 +13,10 @@ import java.io.Serializable;
  */
 public class maestro extends persona implements Serializable {
 
-    public Double sueldo;
+    public String sueldo;
     public String rol;  //tambien se puede poner string acceso
-    public String estado;
     public String carrera;
+    public String materia;
 
     public final void setRegistro(Object[] registro) {
         this.codigoP = Integer.parseInt(registro[0].toString());
@@ -26,13 +26,13 @@ public class maestro extends persona implements Serializable {
         this.telefono = Integer.parseInt(registro[4].toString());
         this.direccion = registro[5].toString();
         this.rol = registro[6].toString();
-        this.estado = registro[7].toString();
-        this.sueldo = Double.parseDouble(registro[8].toString());
-        this.carrera = registro[9].toString();
+        this.sueldo = registro[7].toString();
+        this.carrera = registro[8].toString();
+        this.materia = registro[9].toString();
     }
 
     public Object[] getRegistro() {
-        Object[] registro = {codigoP, nombre, apellido, cedula, telefono, direccion, rol, estado, sueldo, carrera};
+        Object[] registro = {codigoP, nombre, apellido, cedula, telefono, direccion, rol, sueldo, carrera, materia};
         return registro;
     }
 
@@ -40,13 +40,15 @@ public class maestro extends persona implements Serializable {
         this.setRegistro(registro);
     }
 
-    public Double getSueldo() {
+    public String getSueldo() {
         return sueldo;
     }
 
-    public void setSueldo(Double sueldo) {
+    public void setSueldo(String sueldo) {
         this.sueldo = sueldo;
     }
+
+
 
     public String getRol() {
         return rol;
@@ -56,12 +58,14 @@ public class maestro extends persona implements Serializable {
         this.rol = rol;
     }
 
-    public String getEstado() {
-        return estado;
+
+
+    public String getMateria() {
+        return materia;
     }
 
-    public void setEstado(String estado) {
-        this.estado = estado;
+    public void setMateria(String materia) {
+        this.materia = materia;
     }
 
     public String getCarrera() {
