@@ -99,6 +99,11 @@ public class frmPrincipal extends javax.swing.JFrame {
         btnalumnos.setForeground(new java.awt.Color(0, 0, 0));
         btnalumnos.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/student_pupil_disciple_follower_adherent_apostle_icon_146774.png"))); // NOI18N
         btnalumnos.setText("  ALUMNOS");
+        btnalumnos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnalumnosActionPerformed(evt);
+            }
+        });
 
         btnnotas.setBackground(new java.awt.Color(255, 255, 255));
         btnnotas.setFont(new java.awt.Font("Eras Light ITC", 3, 24)); // NOI18N
@@ -205,6 +210,13 @@ public class frmPrincipal extends javax.swing.JFrame {
         nuevo.show();
         dispose();
     }//GEN-LAST:event_btnmaestrosActionPerformed
+
+    private void btnalumnosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnalumnosActionPerformed
+        // TODO add your handling code here:
+        frmAlumnos nuev1o = new frmAlumnos();
+        nuev1o.show();
+        dispose();
+    }//GEN-LAST:event_btnalumnosActionPerformed
 
     /**
      * @param args the command line arguments
